@@ -1,9 +1,40 @@
+#include <stdio.h>
 #include <crc16.h>
+
+unsigned char open[] = {0x55,0x00,0x03,0x00,0x01, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,0x00,0x00};
+unsigned char close[] = {0x55,0x00,0x03,0x00,0x02, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,0x00,0x00};
+unsigned char stop[] = {0x55,0x00,0x03,0x00,0x03, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,0x00,0x00};
+
+void vPrintf(unsigned char *data)
+{
+    for(int i = 0; i < 16; i ++){
+        printf("%02x ", data[i]);
+    }
+    printf("\n");
+}
+
+void vFormat(unsigned char *data, unsigned char addr)
+{
+    data[1] = addr;
+    int crc = CRC16(data, 14);
+    data[14] = (crc>>8)&0xff;
+    data[15] = crc&0xff;
+}
 
 int main()
 {
-    unsigned char data = {};
+    printf("open coordinator:\n");
+    vFormat(open, 0);
+    vPrintf(open);
 
-    printf("crc:0x%02x\n", CRC16(data, sizeof(data)));
+    printf("close coordinator:\n");
+    vFormat(close, 0);
+    vPrintf(close);
+
+    printf("stop coordinator:\n");
+    vFormat(stop, 0);
+    vPrintf(stop);
+    
     return 0;
 }
+
