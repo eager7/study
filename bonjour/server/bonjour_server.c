@@ -64,7 +64,7 @@ int main()
     static const char TXT1[] = "\xC" "First String"  "\xD" "Second String" "\xC" "Third String";
     static const char TXT2[] = "\xD" "Fourth String" "\xC" "Fifth String"  "\xC" "Sixth String";
     printf("Registering Service Test._testdualtxt._tcp.local.\n");
-    int err = DNSServiceRegister(&client, 0, interface, "Test", "_testdualtxt._tcp.", "", NULL, registerPort.NotAnInteger, sizeof(TXT1)-1, TXT1, NULL, NULL);
+    int err = DNSServiceRegister(&client, 0, interface, "Test", "_testdualtxt._tcp.", "", NULL, registerPort.NotAnInteger, sizeof(TXT1)-1, TXT1, reg_reply, NULL);
     if (!err) err = DNSServiceAddRecord(client, &record, 0, kDNSServiceType_TXT, sizeof(TXT2)-1, TXT2, 0);
     else printf("error:%d\n", err);
 #endif
