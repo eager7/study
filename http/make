@@ -1,0 +1,1 @@
+gcc http_test.c libghttp.a -I./libghttp-1.0.9 -L./libghttp-1.0.9 -o test
