@@ -30,16 +30,41 @@ void vFormat(unsigned char *data)
 
 int main()
 {
+	unsigned char test[5] = {0x55, 0x00, 0x00, 0x00, 0x00};
+	
 	unsigned char cmd = 0x00;
 	printf("input cmd:\n");
 	scanf("%x", &cmd);
 
-	unsigned char test[5] = {0x55, 0x01, 0x21, 0x00, 0x00};
-	test[2] = cmd;
+	switch(cmd){
+		case 0x03:{
+			unsigned char value = 0x00;
+			printf("Please input the value:");
+			scanf("%x", &value);
+			test[1] = cmd;
+			test[2] = value;
+		}break;
+		case 0x01:{
+			unsigned char value = 0x00;
+			printf("Please input the value:");
+			scanf("%x", &value);
+			test[1] = cmd;
+			test[2] = value;
+		}break;
+		case 0x05:{
+			test[1] = cmd;
+		}break;
+		case 0x06:{
+			test[1] = cmd;
+		}break;
+	default:	
+		printf("error cmd\n");
+		return 0;
+	}
+
 	vFormat(test);
 
 	for(int i = 0;i < 5; i++){
-
 		printf("%02x ", test[i]);
 	}printf("\n");
 	
