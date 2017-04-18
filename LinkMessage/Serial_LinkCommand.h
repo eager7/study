@@ -239,6 +239,9 @@ uint8_t StartNetwork[] = {0x00,0x24,0x00,0x00,0x00};
 uint8_t ManageLeaveDevice[] = {0x00,0x47,0x00,11,0x00,/*Header*/
 								0x70,0x9f,/*Short Address*/
 								0x00,0x15,0x8d,0x00,0x00,0x53,0x66,0x32/*Extended Address*/};
+uint8_t Status[] = {0x80,0x00,0x00,0x00,0x00,/*Header*/};
+uint8_t CurrentPosition[] = {0x01,0x01,0x00,0x01,0x00,/*Header*/
+								0x00};
 						
 LinkMessage_t LinkMessage[] = {
 	{E_SL_MSG_PERMIT_JOINING_REQUEST,"Permit Joining Request",PermitJoiningRequest,sizeof(PermitJoiningRequest)},
@@ -267,6 +270,9 @@ LinkMessage_t LinkMessage[] = {
 	{E_SL_MSG_START_NETWORK,"StartNetwork",StartNetwork,sizeof(StartNetwork)},
 	//设备管理
 	{E_SL_MSG_MANAGEMENT_LEAVE_REQUEST,"ManageLeaveDevice",ManageLeaveDevice,sizeof(ManageLeaveDevice)},
+	//Mico
+	{E_SL_MSG_STATUS,"Status",Status,sizeof(Status)},
+	{0x0101,"CurrentPosition",CurrentPosition,sizeof(CurrentPosition)},
 	
 };
 

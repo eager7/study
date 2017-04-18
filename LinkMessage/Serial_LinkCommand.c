@@ -71,6 +71,19 @@ static uint8_t eSL_WriteMessage(uint16_t u16Type, uint16_t u16Length, uint8_t *p
 	pu8Data[4] = u8CRC;
 	printf("\n------------The Link Message Is:------------\n");
 	printf("01 ");
+	printf("%02x ", u16Type >> 8);
+	printf("%02x ", u16Type);
+	printf("%02x ", u16Length >> 8);
+	printf("%02x ", u16Length);
+	printf("%02x ", u8CRC);
+	
+	for(n = 0; n < u16Length; n++)
+	{
+		printf("%02x ", pu8Data[n]);	
+	}printf("03\n");
+
+
+	printf("01 ");
 	for ( n = 0; n < pu8Length; n++ )
 	{
 		if(pu8Data[n] < 0x10)
