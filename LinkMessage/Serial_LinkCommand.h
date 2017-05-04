@@ -242,7 +242,11 @@ uint8_t ManageLeaveDevice[] = {0x00,0x47,0x00,11,0x00,/*Header*/
 uint8_t Status[] = {0x80,0x00,0x00,0x00,0x00,/*Header*/};
 uint8_t CurrentPosition[] = {0x01,0x01,0x00,0x01,0x00,/*Header*/
 								0x00};
-						
+uint8_t SystemReset[] = {0x80,0x02,0x00,0x00,0x00,/*Header*/
+								0x00};
+uint8_t NetworkReset[] = {0x80,0x03,0x00,0x00,0x00,/*Header*/
+								0x00};
+								
 LinkMessage_t LinkMessage[] = {
 	{E_SL_MSG_PERMIT_JOINING_REQUEST,"Permit Joining Request",PermitJoiningRequest,sizeof(PermitJoiningRequest)},
 	{E_SL_MSG_READ_ATTRIBUTE_REQUEST,"Read Attribute Request",ReadAttributeRequest,sizeof(ReadAttributeRequest)},
@@ -273,6 +277,8 @@ LinkMessage_t LinkMessage[] = {
 	//Mico
 	{E_SL_MSG_STATUS,"Status",Status,sizeof(Status)},
 	{0x0101,"CurrentPosition",CurrentPosition,sizeof(CurrentPosition)},
+	{0x8002,"SystemReset",SystemReset,sizeof(SystemReset)},
+	{0x8003,"NetworkReset",NetworkReset,sizeof(NetworkReset)},
 	
 };
 
