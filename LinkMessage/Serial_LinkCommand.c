@@ -32,14 +32,21 @@ int main( int argc, char *argv[] )
 					LinkMessage[i].message[10] = u16Index>>8;
 					LinkMessage[i].message[11] = u16Index & 0xff;
 				}
-				
+				else if(0x0101 == u16Index)
+				{
+					printf("Please input Current Position:\n");
+					int CurrentPosition = 0;
+					scanf("%x", &CurrentPosition);
+					LinkMessage[i].message[5] = (uint8_t)CurrentPosition;
+				}
 				u16Type = (LinkMessage[i].message[0]<<8)|LinkMessage[i].message[1];
 				u16Length = (LinkMessage[i].message[2]<<8)|LinkMessage[i].message[3];
 				break;
 			}
+
 		}
 		memcpy(buffer,LinkMessage[i].message, LinkMessage[i].length);
-		eSL_WriteMessage(u16Type,u16Length,buffer, LinkMessage[i].length);
+		eSL_WriteMessage(u16Type, u16Length, buffer, LinkMessage[i].length);
 	}	
 	return 0;
 }
