@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
-project(homekit)
-SET(TARGET homekit_demo)
+project(test)
+SET(TARGET test)
 
 SET(CMAKE_BUILD_TYPE "Debug")
 SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
