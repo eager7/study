@@ -107,6 +107,7 @@ int parse_http_response(uint8_t *response, uint32_t response_len, http_response_
 
 int http_update_ota(char *host, int port, char *resource)
 {
+	int read_bytes = 0;
 	unsigned char buf[BUF_SIZE];
 	unsigned char *alloc, *request;
 	unsigned int idx = 0;
@@ -126,34 +127,22 @@ int http_update_ota(char *host, int port, char *resource)
 		printf("\n\r[%s] Send HTTP request failed", __FUNCTION__);
 		return -1;
 	}
-	memset(buf, 0, BUF_SIZE);
-	//while(1)
-	{
-		int read_bytes = read(server_socket, buf, 1);
-#if 0
-		if(read_bytes == 0){
-			printf("read finished\n");
-			//continue;
-			printf("---------------Http Read:\n");
-			for(int i = 0; i < idx; i ++){
-				//printf("%c", buf[i]);
-			}		
-			//break;
-		} 
-		if(read_bytes < 0){
-			printf("\n\r[%s] Read socket failed", __FUNCTION__);
-			return -1;
+		while (0 == rsp_result.status_code){
+			memset(buf, 0, BUF_SIZE);
+            printf("Read Http Server Response\n");
+			read_bytes = read(server_socket, buf, BUF_SIZE);
+
+			if(read_bytes == 0) 
+				break;
+			if(read_bytes < 0){
+				printf("\n\r[%s] Read socket failed", __FUNCTION__);
+				return -1;
+			}
+		
+			idx += read_bytes;
+			memset(&rsp_result, 0, sizeof(rsp_result));
+			//parse_http_response(buf, idx, &rsp_result);
 		}
-		idx += read_bytes;
-		#endif
-	}
-	memset(&rsp_result, 0, sizeof(rsp_result));
-	parse_http_response(buf, idx, &rsp_result);
-	printf("Read Image Finished[%d]\n", rsp_result.status_code);
-	if(rsp_result.status_code != 200){
-		printf("Failed Read Image\n");
-		return -1;
-	}
 	if (0 == rsp_result.body_len){
 		printf("\n\r[%s] New firmware size = 0 !\n", __FUNCTION__);
 		return -1;
@@ -170,6 +159,6 @@ int http_update_ota(char *host, int port, char *resource)
 int main()
 {
 	printf("http client program...\n");
-	http_update_ota("192.168.0.103", 8082, "test.bin");
+	http_update_ota("192.168.0.103", 8082, "ota.bin");
 	return 0;
 }
