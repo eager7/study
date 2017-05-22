@@ -42,44 +42,6 @@ int update_ota_http_connect_server(int server_socket, char *host, int port){
 	return server_socket;
 }
 
-int http_update_ota(char *host, int port, char *resource)
-{
-	unsigned char buf[BUF_SIZE], *alloc, *request;
-
-	// Connect server
-	int server_socket = update_ota_http_connect_server(server_socket, host, port);
-	if(server_socket == -1){
-		printf("update_ota_http_connect_server error\n");
-		return -1;
-	}
-	request = (unsigned char *) malloc(strlen("GET /") + strlen(resource) + strlen(" HTTP/1.1\r\nHost: ") + strlen(host) + strlen("\r\n\r\n") + 1);
-	sprintf(request, "GET /%s HTTP/1.1\r\nHost: %s\r\n\r\n", resource, host);
-
-	int ret = write(server_socket, request, strlen(request));
-	if(ret < 0){
-		printf("\n\r[%s] Send HTTP request failed", __FUNCTION__);
-		return -1;
-	}
-	while(1){
-		memset(buf, 0, BUF_SIZE);
-		int read_bytes = read(server_socket, buf, BUF_SIZE);
-
-		if(read_bytes == 0){
-			printf("read finished\n");
-			break;
-		} 
-		if(read_bytes < 0){
-			printf("\n\r[%s] Read socket failed", __FUNCTION__);
-			return -1;
-		}
-		
-		for(int i = 0; i < read_bytes; i ++){
-			printf("%c", buf[i]);
-		}		
-	}
-	
-}
-
 int parse_http_response(uint8_t *response, uint32_t response_len, http_response_result_t *result) {
     uint32_t i, p, q, m;
     uint8_t status[4] = {0};
@@ -141,6 +103,68 @@ int parse_http_response(uint8_t *response, uint32_t response_len, http_response_
     }
 
     return ret && (response_len >= p + content_length);
+}
+
+int http_update_ota(char *host, int port, char *resource)
+{
+	unsigned char buf[BUF_SIZE];
+	unsigned char *alloc, *request;
+	unsigned int idx = 0;
+	http_response_result_t rsp_result = {0};
+	
+	// Connect server
+	int server_socket = update_ota_http_connect_server(server_socket, host, port);
+	if(server_socket == -1){
+		printf("update_ota_http_connect_server error\n");
+		return -1;
+	}
+	request = (unsigned char *) malloc(strlen("GET /") + strlen(resource) + strlen(" HTTP/1.1\r\nHost: ") + strlen(host) + strlen("\r\n\r\n") + 1);
+	sprintf(request, "GET /%s HTTP/1.1\r\nHost: %s\r\n\r\n", resource, host);
+	printf("Send Req to Server\n");
+	int ret = write(server_socket, request, strlen(request));
+	if(ret < 0){
+		printf("\n\r[%s] Send HTTP request failed", __FUNCTION__);
+		return -1;
+	}
+	memset(buf, 0, BUF_SIZE);
+	//while(1)
+	{
+		int read_bytes = read(server_socket, buf, 1);
+#if 0
+		if(read_bytes == 0){
+			printf("read finished\n");
+			//continue;
+			printf("---------------Http Read:\n");
+			for(int i = 0; i < idx; i ++){
+				//printf("%c", buf[i]);
+			}		
+			//break;
+		} 
+		if(read_bytes < 0){
+			printf("\n\r[%s] Read socket failed", __FUNCTION__);
+			return -1;
+		}
+		idx += read_bytes;
+		#endif
+	}
+	memset(&rsp_result, 0, sizeof(rsp_result));
+	parse_http_response(buf, idx, &rsp_result);
+	printf("Read Image Finished[%d]\n", rsp_result.status_code);
+	if(rsp_result.status_code != 200){
+		printf("Failed Read Image\n");
+		return -1;
+	}
+	if (0 == rsp_result.body_len){
+		printf("\n\r[%s] New firmware size = 0 !\n", __FUNCTION__);
+		return -1;
+	}
+	else{
+		printf("\n\r[%s] Download new firmware begin, total size : %d\n\r", __FUNCTION__, rsp_result.body_len);
+		for(int i = 0; i < rsp_result.body_len; i++){
+			//printf("%c ", rsp_result.body[i]);
+		}		
+	}
+
 }
 
 int main()
